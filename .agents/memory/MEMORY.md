@@ -1,0 +1,1 @@
+- [Infinite Us project](infinite-us-project.md) — couples card game app; DB schema in lib/db, routes in artifacts/api-server, web in artifacts/web; run typecheck:libs after schema changes

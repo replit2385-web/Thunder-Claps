@@ -1,22 +1,41 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Infinite Us — couples relationship platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: couples
+    description: Couple profile management
+  - name: sessions
+    description: Game session records
+  - name: growth
+    description: Growth score and streaks
+  - name: mirror
+    description: Love language and conflict style assessments
+  - name: bonds
+    description: Community groups and leaderboard
+  - name: rooms
+    description: Real-time game rooms
+  - name: journey
+    description: Seasonal relationship programs
+  - name: blend
+    description: AI couple portrait generation
+  - name: leaderboard
+    description: Global leaderboard
+  - name: admin
+    description: Admin operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +43,397 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /couples:
+    post:
+      operationId: createCouple
+      tags: [couples]
+      summary: Create or update couple profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoupleInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Couple"
+
+  /couples/{coupleId}:
+    get:
+      operationId: getCouple
+      tags: [couples]
+      summary: Get couple profile
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Couple"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateCouple
+      tags: [couples]
+      summary: Update couple profile
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CoupleUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Couple"
+
+  /sessions:
+    post:
+      operationId: createSession
+      tags: [sessions]
+      summary: Record a completed game session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SessionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+
+  /sessions/{coupleId}:
+    get:
+      operationId: getSessions
+      tags: [sessions]
+      summary: Get all sessions for a couple
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Session"
+
+  /growth/{coupleId}:
+    get:
+      operationId: getGrowthScore
+      tags: [growth]
+      summary: Get growth score and history for a couple
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowthScore"
+    patch:
+      operationId: updateGrowthScore
+      tags: [growth]
+      summary: Update growth score after a session
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GrowthScoreUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowthScore"
+
+  /mirror/{coupleId}:
+    get:
+      operationId: getMirrorResults
+      tags: [mirror]
+      summary: Get mirror assessment results for a couple
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MirrorResult"
+    post:
+      operationId: saveMirrorResult
+      tags: [mirror]
+      summary: Save a completed mirror assessment
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MirrorResultInput"
+      responses:
+        "201":
+          description: Saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MirrorResult"
+
+  /bonds:
+    get:
+      operationId: listBonds
+      tags: [bonds]
+      summary: List all community bonds
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Bond"
+    post:
+      operationId: createBond
+      tags: [bonds]
+      summary: Create a community bond group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BondInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bond"
+
+  /bonds/join:
+    post:
+      operationId: joinBond
+      tags: [bonds]
+      summary: Join a bond group by code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BondJoin"
+      responses:
+        "200":
+          description: Joined
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BondMembership"
+
+  /bonds/{bondId}/leaderboard:
+    get:
+      operationId: getBondLeaderboard
+      tags: [bonds]
+      summary: Get ranked members of a bond group
+      parameters:
+        - name: bondId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BondLeaderboardEntry"
+
+  /rooms:
+    post:
+      operationId: createRoom
+      tags: [rooms]
+      summary: Create a live game room
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoomInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Room"
+
+  /rooms/{joinCode}:
+    get:
+      operationId: getRoom
+      tags: [rooms]
+      summary: Get room state by join code
+      parameters:
+        - name: joinCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Room"
+        "404":
+          description: Not found
+
+  /journey/{coupleId}:
+    get:
+      operationId: getJourney
+      tags: [journey]
+      summary: Get seasonal journey progress for a couple
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Journey"
+    patch:
+      operationId: updateJourney
+      tags: [journey]
+      summary: Update journey progress
+      parameters:
+        - name: coupleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JourneyUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Journey"
+
+  /blend:
+    post:
+      operationId: generateBlend
+      tags: [blend]
+      summary: Generate AI couple portrait via Pollinations.ai
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlendInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlendResult"
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [leaderboard]
+      summary: Get global couple leaderboard
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get admin statistics
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +441,359 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    Couple:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        partner1:
+          type: string
+        partner2:
+          type: string
+        avatarJson:
+          type: ["object", "null"]
+        anniversaryDate:
+          type: ["string", "null"]
+        blendImageUrl:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required: [id, name, partner1, partner2, createdAt]
+
+    CoupleInput:
+      type: object
+      properties:
+        name:
+          type: string
+        partner1:
+          type: string
+        partner2:
+          type: string
+        avatarJson:
+          type: ["object", "null"]
+        anniversaryDate:
+          type: ["string", "null"]
+      required: [name, partner1, partner2]
+
+    CoupleUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        partner1:
+          type: string
+        partner2:
+          type: string
+        avatarJson:
+          type: ["object", "null"]
+        anniversaryDate:
+          type: ["string", "null"]
+        blendImageUrl:
+          type: ["string", "null"]
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        coupleId:
+          type: string
+        date:
+          type: string
+        season:
+          type: string
+        cardsPlayed:
+          type: integer
+        cardsDrifted:
+          type: integer
+        durationSeconds:
+          type: integer
+        thisOrThatMatches:
+          type: integer
+        thisOrThatTotal:
+          type: integer
+        scoreEarned:
+          type: integer
+        moodEmoji:
+          type: ["string", "null"]
+        momentTag:
+          type: ["string", "null"]
+        cardTypes:
+          type: array
+          items:
+            type: string
+      required: [id, coupleId, date, cardsPlayed, scoreEarned]
+
+    SessionInput:
+      type: object
+      properties:
+        coupleId:
+          type: string
+        season:
+          type: string
+        cardsPlayed:
+          type: integer
+        cardsDrifted:
+          type: integer
+        durationSeconds:
+          type: integer
+        thisOrThatMatches:
+          type: integer
+        thisOrThatTotal:
+          type: integer
+        scoreEarned:
+          type: integer
+        moodEmoji:
+          type: ["string", "null"]
+        momentTag:
+          type: ["string", "null"]
+        cardTypes:
+          type: array
+          items:
+            type: string
+      required: [coupleId, cardsPlayed, scoreEarned]
+
+    GrowthScore:
+      type: object
+      properties:
+        id:
+          type: string
+        coupleId:
+          type: string
+        total:
+          type: integer
+        streak:
+          type: integer
+        lastPlayed:
+          type: ["string", "null"]
+        historyJson:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScoreHistoryPoint"
+        momentum:
+          type: string
+          enum: [rising, steady, cooling]
+      required: [id, coupleId, total, streak, momentum]
+
+    GrowthScoreUpdate:
+      type: object
+      properties:
+        scoreEarned:
+          type: integer
+        historyPoint:
+          $ref: "#/components/schemas/ScoreHistoryPoint"
+      required: [scoreEarned]
+
+    ScoreHistoryPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        score:
+          type: integer
+      required: [date, score]
+
+    MirrorResult:
+      type: object
+      properties:
+        id:
+          type: string
+        coupleId:
+          type: string
+        quizType:
+          type: string
+          enum: [love_language, conflict_style]
+        partner1Result:
+          type: string
+        partner2Result:
+          type: string
+        completedAt:
+          type: string
+      required: [id, coupleId, quizType, partner1Result, partner2Result, completedAt]
+
+    MirrorResultInput:
+      type: object
+      properties:
+        quizType:
+          type: string
+          enum: [love_language, conflict_style]
+        partner1Result:
+          type: string
+        partner2Result:
+          type: string
+      required: [quizType, partner1Result, partner2Result]
+
+    Bond:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+        createdBy:
+          type: string
+        memberCount:
+          type: integer
+        createdAt:
+          type: string
+      required: [id, name, code, createdAt]
+
+    BondInput:
+      type: object
+      properties:
+        name:
+          type: string
+        coupleId:
+          type: string
+      required: [name, coupleId]
+
+    BondJoin:
+      type: object
+      properties:
+        code:
+          type: string
+        coupleId:
+          type: string
+        currentScore:
+          type: integer
+      required: [code, coupleId]
+
+    BondMembership:
+      type: object
+      properties:
+        id:
+          type: string
+        bondId:
+          type: string
+        coupleId:
+          type: string
+        currentScore:
+          type: integer
+        joinedAt:
+          type: string
+      required: [id, bondId, coupleId, currentScore, joinedAt]
+
+    BondLeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        coupleId:
+          type: string
+        coupleName:
+          type: string
+        currentScore:
+          type: integer
+        joinedAt:
+          type: string
+      required: [rank, coupleId, coupleName, currentScore, joinedAt]
+
+    Room:
+      type: object
+      properties:
+        id:
+          type: string
+        joinCode:
+          type: string
+        coupleId:
+          type: string
+        phase:
+          type: string
+          enum: [waiting, active, finished]
+        currentCardId:
+          type: ["string", "null"]
+        stateJson:
+          type: ["object", "null"]
+        createdAt:
+          type: string
+        expiresAt:
+          type: string
+      required: [id, joinCode, coupleId, phase, createdAt, expiresAt]
+
+    RoomInput:
+      type: object
+      properties:
+        coupleId:
+          type: string
+      required: [coupleId]
+
+    Journey:
+      type: object
+      properties:
+        id:
+          type: string
+        coupleId:
+          type: string
+        currentSeason:
+          type: string
+        startedAt:
+          type: string
+        completedDays:
+          type: integer
+      required: [id, coupleId, currentSeason, startedAt, completedDays]
+
+    JourneyUpdate:
+      type: object
+      properties:
+        completedDays:
+          type: integer
+        currentSeason:
+          type: string
+
+    BlendInput:
+      type: object
+      properties:
+        partner1:
+          type: string
+        partner2:
+          type: string
+        style:
+          type: string
+      required: [partner1, partner2]
+
+    BlendResult:
+      type: object
+      properties:
+        imageUrl:
+          type: string
+        prompt:
+          type: string
+      required: [imageUrl, prompt]
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        coupleId:
+          type: string
+        coupleName:
+          type: string
+        totalScore:
+          type: integer
+        streak:
+          type: integer
+        momentum:
+          type: string
+      required: [rank, coupleName, totalScore, streak, momentum]
+
+    AdminStats:
+      type: object
+      properties:
+        totalCouples:
+          type: integer
+        totalSessions:
+          type: integer
+        totalBonds:
+          type: integer
+        avgScore:
+          type: integer
+        topCouple:
+          type: ["string", "null"]
+      required: [totalCouples, totalSessions, totalBonds, avgScore]
